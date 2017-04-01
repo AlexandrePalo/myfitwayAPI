@@ -7,7 +7,7 @@ const APP_PORT = 3000
 
 const app = express()
 
-app.use('/', graphqlHTTP({
+app.use('/graphql', graphqlHTTP({
   schema: Schema,
   pretty: true,
   graphiql: true
