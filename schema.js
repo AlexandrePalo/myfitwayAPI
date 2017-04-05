@@ -2,8 +2,9 @@ import {
   GraphQLObjectType,
   GraphQLSchema,
   GraphQLInt,
+  GraphQLFloat,
   GraphQLString,
-  GraphQLList
+  GraphQLList,
 } from 'graphql'
 import Db from './db'
 
@@ -55,7 +56,7 @@ const Track = new GraphQLObjectType({
       }
     },
     distance: {
-      type: GraphQLString,
+      type: GraphQLFloat,
       resolve(track) {
         return track.distance
       }
@@ -90,7 +91,8 @@ const Query = new GraphQLObjectType({
       args: { // args de recherche autorisés
         id: { type: GraphQLInt },
         title: { type: GraphQLString },
-        place: { type: GraphQLString }
+        place: { type: GraphQLString },
+        categoryId: { type: GraphQLInt }
       },
       resolve(root, args) { // fonction qui recherche
         return Db.models.track.findAll({ where: args }) // conn. à la db
@@ -110,8 +112,36 @@ const Query = new GraphQLObjectType({
   })
 })
 
+const Mutation = new GraphQLObjectType({
+  name: 'Mutation',
+  description: 'Root mutation',
+  fields: () => ({
+    addTrack: {
+      type: Track,
+      args: {
+        id: { type: GraphQLInt },
+        title: { type: GraphQLString },
+        distance: { type: GraphQLFloat },
+        place: { type: GraphQLString },
+        description: { type: GraphQLString },
+        categoryId: { type: GraphQLInt }
+      },
+      resolve: (root, args) => {
+        return Db.models.track.create({
+          title: args.title,
+          distance: args.distance,
+          place: args.place,
+          description: args.description,
+          categoryId: args.categoryId
+        })
+      }
+    }
+  })
+})
+
 const Schema = new GraphQLSchema({
-  query: Query
+  query: Query,
+  mutation: Mutation
 })
 
 export default Schema

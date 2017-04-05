@@ -12,20 +12,20 @@ const Conn = new Sequelize(
 )
 
 // Models
-const Track = Conn.define('track', {
+export const TrackDB = Conn.define('track', {
   title: { type: Sequelize.STRING, allowNull: false },
   distance: { type: Sequelize.DOUBLE },
   place: { type: Sequelize.STRING },
   description: { type: Sequelize.STRING }
 })
-const Category = Conn.define('category', {
+export const CategoryDB = Conn.define('category', {
   code: { type: Sequelize.STRING, allowNull: false },
   name: { type: Sequelize.STRING, allowNull: false }
 })
 
 // Relationships
-Track.belongsTo(Category)
-Category.hasMany(Track)
+TrackDB.belongsTo(CategoryDB)
+CategoryDB.hasMany(TrackDB)
 
 // Populate
 Conn.sync({ force: true }).then(() => {
@@ -36,7 +36,7 @@ Conn.sync({ force: true }).then(() => {
     { code: 'motorbike', name: 'Enduro' },
     { code: 'footing', name: 'Footing' }
   ].forEach((cat) => {
-    Category.create({
+    CategoryDB.create({
       code: cat.code,
       name: cat.name
     }).then((category) => {
