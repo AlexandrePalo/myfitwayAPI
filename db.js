@@ -1,5 +1,6 @@
 import Sequelize from 'sequelize'
 import faker from 'faker'
+import moment from 'moment'
 
 const Conn = new Sequelize(
   'myfitway',
@@ -16,7 +17,9 @@ export const TrackDB = Conn.define('track', {
   title: { type: Sequelize.STRING, allowNull: false },
   distance: { type: Sequelize.DOUBLE },
   place: { type: Sequelize.STRING },
-  description: { type: Sequelize.STRING }
+  description: { type: Sequelize.STRING },
+  addTimestamp: { type: Sequelize.DATE },
+  downloads: { type: Sequelize.INTEGER }
 })
 export const CategoryDB = Conn.define('category', {
   code: { type: Sequelize.STRING, allowNull: false },
@@ -44,7 +47,9 @@ Conn.sync({ force: true }).then(() => {
         title: faker.lorem.words(),
         distance: faker.random.number(),
         place: faker.address.city(),
-        description: faker.lorem.sentences()
+        description: faker.lorem.sentences(),
+        addTimestamp: moment(),
+        downloads: 0
       })
     })
   })

@@ -13,6 +13,4 @@ app.use('/graphql', graphqlHTTP({
   graphiql: true
 }))
 
-app.use('/static', express.static('static'))
-
 app.listen(APP_PORT, () => console.log('App listening on port ' & APP_PORT))

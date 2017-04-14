@@ -6,6 +6,8 @@ import {
   GraphQLString,
   GraphQLList,
 } from 'graphql'
+import GraphQLDate from 'graphql-date'
+import moment from 'moment'
 import Db from './db'
 
 const Category = new GraphQLObjectType({
@@ -78,6 +80,18 @@ const Track = new GraphQLObjectType({
       resolve(track) {
         return track.getCategory()
       }
+    },
+    addTimestamp: {
+      type: GraphQLDate,
+      resolve(track) {
+        return track.addTimestamp
+      }
+    },
+    downloads: {
+      type: GraphQLInt,
+      resolve(track) {
+        return track.downloads
+      }
     }
   })
 })
@@ -108,6 +122,50 @@ const Query = new GraphQLObjectType({
       resolve(root, args) {
         return Db.models.category.findAll({ where: args })
       }
+    },
+    category: {
+      type: Category,
+      args: {
+        id: { type: GraphQLInt }
+      },
+      resolve(root, args) {
+        return Db.models.category.find({ where: args })
+      }
+    },
+    track: {
+      type: Track,
+      args: {
+        id: { type: GraphQLInt }
+      },
+      resolve(root, args) {
+        return Db.models.track.find({ where: args })
+      }
+    },
+    newTracks: {
+      type: new GraphQLList(Track),
+      args: {
+        categoryId: { type: GraphQLInt }
+      },
+      resolve(root, args) {
+        return Db.models.track.findAll({
+          where: args,
+          order: 'addTimestamp DESC',
+          limit: 10
+        })
+      }
+    },
+    famousTracks: {
+      type: new GraphQLList(Track),
+      args: {
+        categoryId: { type: GraphQLInt }
+      },
+      resolve(root, args) {
+        return Db.models.track.findAll({
+          where: args,
+          order: 'downloads DESC',
+          limit: 10
+        })
+      }
     }
   })
 })
@@ -132,6 +190,8 @@ const Mutation = new GraphQLObjectType({
           distance: args.distance,
           place: args.place,
           description: args.description,
+          addTimestamp: moment(),
+          downloads: 0,
           categoryId: args.categoryId
         })
       }
